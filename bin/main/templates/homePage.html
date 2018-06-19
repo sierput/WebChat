@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhFtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" th:href="@{/css/center.css}" />
+</head>
+<body>
+	<div class="container">
+		<sec:authorize access="authenticated">
+			<sec:authentication property="principal.username" var="userName" /> Logged in as 
+			<a class="text-right" th:text="${userName}"></a>
+			</sec:authentication>
+			<div class="float-sm-right">
+				<div sec:authorize="isAuthenticated()">
+				<a th:href="'/logout'" class="btn btn-info" role="button">logout</a>
+					<!-- waitingUsers -->
+					<div th:switch="${role}">
+						<p th:case="admin">
+							<button type="button" class="btn btn-primary"> Users waiting
+							<span class="badge badge-light" th:text="${waitingUsers}"> </span>
+							</button>
+						</p>
+						<p th:case="*"></p>
+					</div>
+				</div>
+				<div sec:authorize="!isAuthenticated()">
+					<a th:href="'/login'" class="btn btn-info" role="button">log in</a>
+				</div>
+			</div>
+		</sec:authorize>
+	</div>
+	<div class="jumbotron text-center"
+		style="background-color: transparent; border-radius: 20px; font-size: 30px">
+		<h1>Home Page</h1>
+	</div>
+	<div class="outer">
+
+		<div class="d-flex justify-content-center  mb-3">
+			<div class="form-group">
+				<a href="/login" role="button" class="btn btn-info">Sign in</a> <a
+					href="/adduser" role="button" class="btn btn-info">Sign up</a>
+				<div th:switch="${role}">
+					<p th:case="admin">
+						<a href="/showWaitingUsers" role="button" class="btn btn-info">Show
+							waiting user</a> <a href="/showusers" role="button"
+							class="btn btn-info">Show user</a> <a href="/helloworld"
+							role="button" class="btn btn-info">HelloWord</a>
+					</p>
+					<p th:case="user">
+						<a href="/helloworld" role="button" class="btn btn-info">HelloWord</a>
+					</p>
+					<p th:case="*"></p>
+				</div>
+			</div>
+			<div>
+				<div class="form-group">
+					<table class="table">
+						<tr th:each="message : ${messages}">
+							<td
+								th:text="${message.date} + '  '+ ${message.sender} + ':' + ${message.content}">contain</td>
+						</tr>
+					</table>
+				</div>
+				<div class="form-group">
+					<form action="#" th:action="@{/}" th:object="${newMessage}"
+						method="post">
+						<input type="text" th:field="*{content}" />
+						 <input class="btn btn-info" type="submit" value="Submit" />
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+</body>
+</html>

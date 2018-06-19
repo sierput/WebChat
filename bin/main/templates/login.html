@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhFtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/center.css" />
+</head>
+<body>
+	<div class="container">
+		<sec:authorize access="authenticated">
+			<sec:authentication property="principal.username" var="userName" /> Logged in as 
+			<a class="text-right" th:text="${userName}"></a>
+			</sec:authentication>
+			<div class="float-sm-right">
+				<div sec:authorize="isAuthenticated()">
+					<a th:href="'/logout'" class="btn btn-info" role="button">logout</a>
+				</div>
+				<div sec:authorize="!isAuthenticated()">
+					<a th:href="'/login'" class="btn btn-info" role="button">log in</a>
+				</div>
+			</div>
+		</sec:authorize>
+	</div>
+	<div class="outer">
+		<div class="d-flex justify-content-center  mb-3"
+			style="margin-top: 110px;">
+			<form th:action="@{/login}" method="post">
+				<div th:if="${param.logout}">You have been logged out.</div>
+				<div th:if="${param.error}">Invalid user name and password.</div>
+				<div class="form-group">
+					<label> User Name :</label> <input type="text" name="username" />
+				</div>
+				<div class="form-group">
+					<label> Password:</label> <input type="password" name="password" />
+				</div>
+				<button class="btn btn-info" type="submit">Sign in</button>
+				<a th:href="@{/adduser}" class="btn btn-info" role="button">Sign
+					up</a>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>
+<!-- <a href="${pageContext.request.contextPath}/userInfos" -->
