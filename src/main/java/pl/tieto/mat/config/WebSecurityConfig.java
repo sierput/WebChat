@@ -77,6 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		User admin = new User("Mateusz", "ed", "sierputx@gmail.com", true, "test", "test");
 		admin.setRoles(new HashSet<>(roleRepository.findAll()));
 		userService.save(admin);
+
 		super.init(web);
 	}
 }

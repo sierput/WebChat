@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -45,10 +47,12 @@ public class UserController {
 	}
 
 	@GetMapping("/")
-	public String homePage(Model model) {
+	public String homePage(Model model, Message message) {
+
 		model.addAttribute("waitingUsers", findWaitingUsers().size());
 		model.addAttribute("role", getRoleForView());
 		addToModelActualUserName(model);
+		System.out.println(message);
 		if (messages == null)
 			messages = new ArrayList<Message>();
 		model.addAttribute("messages", messages);
@@ -56,13 +60,13 @@ public class UserController {
 
 		return "homePage";
 	}
-
-	@PostMapping("/")
-	public String message(Message newMessage, BindingResult bindingResult) {
-		if (getActualUser().getFirstName() == null)
-			messages.add(new Message(newMessage.getContent(), "no body"));
-		messages.add(new Message(newMessage.getContent(), getActualUser().getFirstName()));
-		return "redirect:/";
+	@MessageMapping("/")
+	@SendTo("/")
+	public void handleMessage(String message) {
+		if (getActualUser() == null)
+			messages.add(new Message(message, "no body"));
+		else
+			messages.add(new Message(message, getActualUser().getFirstName()));
 	}
 
 	@GetMapping("/login")
@@ -184,7 +188,9 @@ public class UserController {
 
 	private User getActualUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName(); //
+		String name = "no body";
+		if(auth != null)
+		name = auth.getName();
 		return userRepositories.findByFirstName(name);
 	}
 
