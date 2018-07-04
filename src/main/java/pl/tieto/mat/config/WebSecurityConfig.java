@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
             .authorizeRequests()
-                .antMatchers("/", "/adduser").permitAll().antMatchers("/css/**").permitAll()
+                .antMatchers("/", "/adduser").permitAll()
                 .antMatchers("/showWaitingUsers/approve/{id}").hasAuthority("admin")
                 .antMatchers("/showusers").hasAuthority("admin")
                 .antMatchers("/showWaitingUsers").hasAuthority("admin")
@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .formLogin()
                 .loginPage("/login")
+                .defaultSuccessUrl("/", true)
                 .permitAll()
                 .and()
             .logout()
@@ -77,7 +78,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		User admin = new User("Mateusz", "ed", "sierputx@gmail.com", true, "test", "test");
 		admin.setRoles(new HashSet<>(roleRepository.findAll()));
 		userService.save(admin);
-
+		//temp
+		User user = new User("tomek", "ed", "tomek@tomek.com", true, "test", "test");
+		admin.setRoles(new HashSet<>(roleRepository.findAll()));
+		userService.save(user);
+		//
 		super.init(web);
 	}
 }

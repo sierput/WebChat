@@ -15,6 +15,7 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" th:href="@{/css/center.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/custom.css}" />
   <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -24,7 +25,7 @@
 	<div class="container">
 		<sec:authorize access="authenticated">
 			<sec:authentication property="principal.username" var="userName" /> Logged in as 
-			<a class="text-right" th:text="${userName}"></a>
+			<a class="text-right" id="user" th:text="${userName}"></a>
 			</sec:authentication>
 			<div class="float-sm-right">
 				<div sec:authorize="isAuthenticated()">
@@ -68,28 +69,75 @@
 					<p th:case="*"></p>
 				</div>
 			</div>
-			<div>
-				<div class="form-group">
-					<table class="table" id="conversation">
-						<tr th:each="message : ${messages}">
-							<td
-								th:text="${message.date} + '  '+ ${message.sender} + ':' + ${message.content}">contain</td>
-						</tr>
-					</table>
-				</div>
-				<div class="form-group">
-					<form action="#" th:action="@{/}" th:object="${newMessage}"
-						method="post">
-						<input type="text" th:field="*{content}" /> <input
-							class="btn btn-info" type="submit" value="Submit" id="send" />
-						<button id="connect" class="btn btn-default" type="submit">Connect</button>
-						<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
-					</form>
-				</div>
-			</div>
 
+			<div sec:authorize="isAuthenticated()">
+			<!--  --------------------------------------------------------------------------------- -->
+				<div class="container" >
+					<div class="row pt-3">
+						<div class="chat-main" >
+							<div
+								class="col-md-12 chat-header rounded-top bg-primary text-white">
+								<div class="row">
+									<div class="col-md-6 username pl-2">
+										<i class="fa fa-circle text-success" aria-hidden="true"></i>
+										<h6 class="m-0">
+											<a th:text="${userName}"></a>
+										</h6>
+										<!-- user name -->
+									</div>
+								</div>
+							</div>
+							<div class="chat-content">
+								<div class="col-md-12 chats border" id="ramka">
+									<ul class="p-0">
+
+										<li class="p-1 rounded mb-1" >
+											<div class="form-group">
+												<table class="table" id="conversation">
+											
+													<tr th:each="message : ${messages}">
+														<td
+															class="pl-2 pr-2 bg-primary rounded text-white text-center send-msg mb-1"
+															th:text="${message.date} + '  '+ ${message.sender} + ': ' + ${message.content}">contain</td>
+													</tr>
+													
+												</table>
+											</div>
+										<li class="p-1 rounded  mb-1">
+										</li>
+
+									</ul>
+								</div>
+								<div class="col-md-12 message-box border pl-2 pr-2 border-top-0">
+									<div class="form-group">
+										<form action="#" th:action="@{/}" th:object="${newMessage}"
+											method="post">
+											<input type="text" class="pl-0 pr-0 w-100"
+												placeholder="Type a message..." id="pole"
+												th:field="*{content}" /> <input class="btn btn-info"
+												type="submit" value="Submit" id="send" />
+
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- ------------------------------------------------------------------------------------- -->
+				<script type="text/javascript">
+					window.setInterval(function() {
+						let elem = document.getElementById('ramka');
+						elem.scrollTop = elem.scrollHeight;
+					}, 500);
+				</script>
+
+				
+			</div>
 		</div>
+
 	</div>
+
 
 
 

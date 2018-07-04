@@ -54,7 +54,7 @@ function showGreeting(message) {
     row.innerHTML = value;
     }
     else {
-        let value = "<tr><td class= \" pl-2 pr-2 bg rounded text-center mb-1 receive-msg-desc\">" + checkSpecialChar + "</td></tr>";
+        let value = "<tr><td class= \"receive-msg rounded text-center mt-1 ml-1 pl-2 pr-2 mb-0 mt-1 pl-2 pr-2 rounded-top rounded-right \">" + checkSpecialChar + "</td></tr>";
         row.innerHTML = value;
     }
     

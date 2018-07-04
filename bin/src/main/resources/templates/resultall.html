@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhFtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Getting Started: Handling Form Submission</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Spring Security Example</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" th:href="@{/css/center.css}" />
+</head>
+<body>
+	<div class="container">
+		<sec:authorize access="authenticated">
+			<sec:authentication property="principal.username" var="userName" /> Logged in as 
+			<a class="text-right" th:text="${userName}"></a>
+			</sec:authentication>
+			<div class="float-sm-right">
+				<div sec:authorize="isAuthenticated()">
+					<a th:href="'/logout'" class="btn btn-info" role="button">logout</a>
+				</div>
+				<div sec:authorize="!isAuthenticated()">
+					<a th:href="'/login'" class="btn btn-info" role="button">log in</a>
+				</div>
+			</div>
+		</sec:authorize>
+	</div>
+	<div class="container">
+		<h1>Result</h1>
+		<table class="table">
+			<tr th:each="user : ${users}">
+				<td th:text="'id: ' + ${user.id}">id</td>
+				<td th:text="'firstName: ' + ${user.firstName}">first name</td>
+				<td th:text="'lastName: ' + ${user.lastName}">last name</td>
+				<td th:text="'email: ' + ${user.email}">email</td>
+				<td><a th:href="@{/showWaitingUsers/edit/__${user.id}__}"
+					class="btn btn-default" type="submit">edit</a></td>
+			</tr>
+		</table>
+		<a href="/adduser" class="btn btn-info" role="button" >Submit another message</a>
+		<a href="/" class="btn btn-info" role="button" >Home page</a>
+	</div>
+</body>
+</html>

@@ -19,7 +19,7 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/', function (message) {
-            showGreeting(JSON.parse(message.body).content);
+            showGreeting(message);
         });
     });
 }
@@ -33,23 +33,39 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/", {}, JSON.stringify({$("#content").val()}));
-    let table = document.getElementById("conversation");
-    let row = table.insertRow(0);
-    row.innerHTML = JSON.stringify({'content': $("#content").val()});
+	let user =   document.getElementById("user").innerText;
+    stompClient.send("/", {}, JSON.stringify({'sender': user,'content': $("#pole").val()}));
     
 }
 
 function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+	var actualUser = document.getElementById("user").innerText;
+	
+	var content = JSON.parse(message.body).content;
+	var sender = JSON.parse(message.body).sender;
+    $("#greetings").append("<tr><td class= pl-2 pr-2 bg-primary rounded text-white text-center send-msg mb-1 >" + content + "</td></tr>");
+    let table = document.getElementById("conversation");
+    let row = table.insertRow(-1);
+    let newRow = JSON.stringify(sender)+ ': ' + JSON.stringify(content);
+    let newRow2 = newRow.replace(/\"/g, "");
+    let checkSpecialChar = newRow2.replace(/\</g, ""); // temp for HTML mark
+    if(actualUser == sender) {
+    let value = "<tr><td class= \"pl-2 pr-2 bg-primary rounded text-white text-center send-msg mb-1 \">" + checkSpecialChar + "</td></tr>";
+    row.innerHTML = value;
+    }
+    else {
+        let value = "<tr><td class= \" pl-2 pr-2 bg rounded text-center mb-1 receive-msg-desc\">" + checkSpecialChar + "</td></tr>";
+        row.innerHTML = value;
+    }
+    
+    document.getElementById("pole").value = "";
+    
 }
 
 $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
+    connect(); 
     $( "#send" ).click(function() { sendName(); });
 });
-

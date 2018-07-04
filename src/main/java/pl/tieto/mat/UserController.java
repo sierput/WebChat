@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -52,7 +54,6 @@ public class UserController {
 		model.addAttribute("waitingUsers", findWaitingUsers().size());
 		model.addAttribute("role", getRoleForView());
 		addToModelActualUserName(model);
-		System.out.println(message);
 		if (messages == null)
 			messages = new ArrayList<Message>();
 		model.addAttribute("messages", messages);
@@ -60,13 +61,20 @@ public class UserController {
 
 		return "homePage";
 	}
+
 	@MessageMapping("/")
 	@SendTo("/")
-	public void handleMessage(String message) {
-		if (getActualUser() == null)
-			messages.add(new Message(message, "no body"));
+	public void handleMessage(String message) throws JSONException {
+		JSONObject obj = new JSONObject();
+
+		obj = new JSONObject(message);
+
+		String user = (String) obj.get("sender");
+		String content = (String) obj.get("content");
+		if (user == null || user.equals(""))
+			messages.add(new Message(content, ""));
 		else
-			messages.add(new Message(message, getActualUser().getFirstName()));
+			messages.add(new Message(content, user));
 	}
 
 	@GetMapping("/login")
@@ -189,8 +197,8 @@ public class UserController {
 	private User getActualUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = "no body";
-		if(auth != null)
-		name = auth.getName();
+		if (auth != null)
+			name = auth.getName();
 		return userRepositories.findByFirstName(name);
 	}
 
